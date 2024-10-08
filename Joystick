@@ -1,0 +1,81 @@
+#define VRX_PIN  A1 // Arduino pin connected to VRX pin
+#define VRY_PIN  A0 // Arduino pin connected to VRY pin
+
+#define LEFT_THRESHOLD  250
+#define RIGHT_THRESHOLD 950
+#define UP_THRESHOLD    250
+#define DOWN_THRESHOLD  950
+
+#define COMMAND_NO     0x00
+#define COMMAND_LEFT   0x01
+#define COMMAND_RIGHT  0x02
+#define COMMAND_UP     0x04
+#define COMMAND_DOWN   0x08
+
+int xValue = 0 ; // To store value of the X axis
+int yValue = 0 ; // To store value of the Y axis
+int command = COMMAND_NO;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+
+void loop() {
+  // read analog X and Y analog values
+  xValue = analogRead(VRX_PIN);
+  yValue = analogRead(VRY_PIN);
+
+
+  // converts the analog value to commands
+  // reset commands
+  command = COMMAND_NO;
+
+
+  // check left/right commands
+  if (xValue < LEFT_THRESHOLD)
+    command = command | COMMAND_LEFT;
+  else if (xValue > RIGHT_THRESHOLD)
+    command = command | COMMAND_RIGHT;
+
+
+  // check up/down commands
+  if (yValue < UP_THRESHOLD)
+    command = command | COMMAND_UP;
+  else if (yValue > DOWN_THRESHOLD)
+    command = command | COMMAND_DOWN;
+
+
+  // NOTE: AT A TIME, THERE MAY BE NO COMMAND, ONE COMMAND OR TWO COMMANDS
+
+  // print command to serial and process command
+  if (command & COMMAND_LEFT) {
+    Serial.write('4');
+    // TODO: MOVE LEFT
+  }
+
+
+  if (command & COMMAND_RIGHT) {
+    Serial.write('3');
+    // TODO: MOVE RIGHT
+  }
+
+
+  if (command & COMMAND_UP) {
+    Serial.write('1');
+    // TODO: MOVE UP
+  }
+
+
+  if (command & COMMAND_DOWN) {
+    Serial.write('2');
+    // TODO: MOVE DOWN
+  }
+  
+  if ( LEFT_THRESHOLD < xValue && xValue < RIGHT_THRESHOLD && UP_THRESHOLD < yValue && yValue < DOWN_THRESHOLD ) {
+    Serial.write('5');
+    // TODO: MOVE DOWN
+  }
+
+
+}
