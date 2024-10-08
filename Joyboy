@@ -1,0 +1,234 @@
+char t;
+int cm;
+int cm2;
+int count = 0;
+const int Sp = 13;
+
+long readUltrasonicDistance(int triggerPin, int echoPin) {
+  pinMode(triggerPin, OUTPUT);  // Clear the trigger
+  digitalWrite(triggerPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigger pin to HIGH state for 10 microseconds
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerPin, LOW);
+  pinMode(echoPin, INPUT);
+  // Reads the echo pin, and returns the sound wave travel time in microseconds
+  return pulseIn(echoPin, HIGH);
+}
+
+
+void setup() {
+
+
+  pinMode(A0, OUTPUT);
+    pinMode(A1, OUTPUT);
+  pinMode(2, INPUT);    // Echo Pin 1
+  pinMode(3, INPUT);    // Trig Pin 1
+  pinMode(4, INPUT);    // Echo Pin 1
+  pinMode(7, INPUT);    // Trig Pin 2
+  pinMode(5, OUTPUT);   // Powers right motors
+  pinMode(6, OUTPUT);   // Powers Left Motors
+pinMode(9,OUTPUT);   //right motors forward
+pinMode(10,OUTPUT);   //right motors reverse
+pinMode(11,OUTPUT);   //left motors forward
+pinMode(12,OUTPUT);   //left motors reverse
+
+
+ Serial.begin(9600);
+}
+
+void loop() {
+
+if(count == 3){
+    cm = 0.01723 * readUltrasonicDistance(3, 2);
+   delay(5);
+   cm2 = 0.01723 * readUltrasonicDistance(7, 4);
+   delay(5);
+    count = 0;
+ }
+ count++;
+ 
+  if (Serial.available()) {
+    t = Serial.read();
+    //Serial.println(t);
+  }
+
+
+  if (t == '1' && cm > 30) {  //move forward(all motors rotate in forward direction)
+     digitalWrite(9, HIGH);
+    digitalWrite(10, LOW);
+    digitalWrite(11, HIGH);
+    digitalWrite(12, LOW);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+
+
+     if (cm < 20 ) {  //STOP (all motors stop)
+     analogWrite(A1, 255);
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    digitalWrite(12, LOW);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+    tone(Sp, 55, 2000);
+  }
+   else{
+     analogWrite(A1, 0);
+   }
+    
+    
+  }
+
+  else if (t == '2' && cm2 > 30) {  //move reverse (all motors rotate in reverse direction)
+     digitalWrite(9, LOW);
+    digitalWrite(10, HIGH);
+    digitalWrite(11, LOW);
+    digitalWrite(12, HIGH);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+
+
+       if (cm2 < 20 ) {  //STOP (all motors stop)
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    digitalWrite(12, LOW);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+    tone(Sp, 55, 2000);
+    analogWrite(A0,255);
+  }
+     else{
+     analogWrite(A0, 0);
+   }
+  }
+
+
+  else if (t == '3' && cm > 30) {  //turn right (left side motors rotate in forward direction, right side motors doesn't rotate)
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, HIGH);
+    digitalWrite(12, LOW);
+  analogWrite(6, 255);
+    analogWrite(5, 255);
+
+
+  if (cm < 20) {  //STOP (all motors stop)
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    digitalWrite(12, LOW);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+    tone(Sp, 55, 2000);
+    analogWrite(A1,255);
+    
+  }
+     if (cm2 < 20) {  //STOP (all motors stop)
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    digitalWrite(12, LOW);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+    tone(Sp, 55, 2000);
+    analogWrite(A0,255);
+    
+  }  
+  else{
+     analogWrite(A1, 0);
+     analogWrite(A0,0);
+   }
+  }
+
+
+
+
+  else if (t == '4' &&  cm > 30) {  //turn left (right side motors rotate in forward direction, left side motors doesn't rotate)
+    digitalWrite(9, HIGH);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    digitalWrite(12, LOW);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+
+
+      if (cm < 20) {  //STOP (all motors stop)
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    digitalWrite(12, LOW);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+    tone(Sp, 55, 2000);
+    analogWrite(A1,255);
+    
+  }
+     if (cm2 < 20) {  //STOP (all motors stop)
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    digitalWrite(12, LOW);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+    tone(Sp, 55, 2000);
+    analogWrite(A0,255);
+    
+  }
+
+
+    else{
+     analogWrite(A1, 0);
+     analogWrite(A0,0);
+   }
+  }
+
+
+
+
+  else if (t == '5') {  //STOP (all motors stop)
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    digitalWrite(12, LOW);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+  }
+
+
+   else if (cm <20) {  //STOP (all motors stop)
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    digitalWrite(12, LOW);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+    tone(Sp, 55, 2000);
+     analogWrite(A1,255);
+
+
+  }
+
+
+   else if ( cm2 < 20) {  //STOP (all motors stop)
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    digitalWrite(12, LOW);
+    analogWrite(6, 255);
+    analogWrite(5, 255);
+    tone(Sp, 55, 2000);
+     analogWrite(A0,255);
+  }
+    else{
+     analogWrite(A1, 0);
+     analogWrite(A0,0);
+   }
+  
+}
+
+
+
+
